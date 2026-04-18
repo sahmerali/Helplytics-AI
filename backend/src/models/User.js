@@ -7,6 +7,33 @@ import mongoose from "mongoose";
 
 const userSchema = new mongoose.Schema(
   {
+    // User's Role (Helplytics specific)
+    role: {
+      type: String,
+      enum: ["Need Help", "Can Help", "Both"],
+      required: [true, "Role is required"],
+    },
+
+    // Onboarding status
+    hasCompletedOnboarding: {
+      type: Boolean,
+      default: false,
+    },
+
+    // Profile fields (collected during onboarding)
+    skills: {
+      type: [String],
+      default: [],
+    },
+    interests: {
+      type: [String],
+      default: [],
+    },
+    location: {
+      type: String,
+      default: "",
+    },
+
     // User's display name
     name: {
       type: String,

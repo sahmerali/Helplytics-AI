@@ -13,6 +13,8 @@ import mongoose from "mongoose";
 import authRoutes from "./routes/auth.routes.js";
 import subscriptionRoutes from "./routes/subscription.routes.js";
 import webhookRoutes from "./routes/webhook.routes.js";
+import matchRoutes from "./routes/match.routes.js";
+import projectRoutes from "./routes/project.routes.js";
 
 // Load environment variables from .env file
 dotenv.config();
@@ -39,6 +41,8 @@ app.use(
 // ---- API Routes ----
 app.use("/api/auth", authRoutes);
 app.use("/api/subscription", subscriptionRoutes);
+app.use("/api/matches", matchRoutes);
+app.use("/api/projects", projectRoutes);
 
 // Simple health check route
 app.get("/", (_req, res) => {

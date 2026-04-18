@@ -20,11 +20,15 @@ const generateToken = (userId) => {
 // Creates a new user account
 export const register = async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    const { name, email, password, role } = req.body;
 
     // 1. Validate input
-    if (!name || !email || !password) {
+    if (!name || !email || !password || !role) {
       return res.status(400).json({ message: "All fields are required." });
+    }
+
+    if (!["Need Help", "Can Help", "Both"].includes(role)) {
+      return res.status(400).json({ message: "Invalid role selected." });
     }
 
     // 2. Check if email is already in use
@@ -42,6 +46,7 @@ export const register = async (req, res) => {
       name,
       email,
       password: hashedPassword,
+      role,
     });
 
     // 5. Generate a JWT so the user is immediately logged in
@@ -55,6 +60,8 @@ export const register = async (req, res) => {
         name: user.name,
         email: user.email,
         plan: user.plan,
+        role: user.role,
+        hasCompletedOnboarding: user.hasCompletedOnboarding,
         subscriptionStatus: user.subscriptionStatus,
       },
     });
@@ -100,6 +107,8 @@ export const login = async (req, res) => {
         name: user.name,
         email: user.email,
         plan: user.plan,
+        role: user.role,
+        hasCompletedOnboarding: user.hasCompletedOnboarding,
         subscriptionStatus: user.subscriptionStatus,
       },
     });
@@ -127,6 +136,8 @@ export const getMe = async (req, res) => {
         name: user.name,
         email: user.email,
         plan: user.plan,
+        role: user.role,
+        hasCompletedOnboarding: user.hasCompletedOnboarding,
         subscriptionStatus: user.subscriptionStatus,
         stripeCustomerId: user.stripeCustomerId,
         subscriptionId: user.subscriptionId,
@@ -135,5 +146,60 @@ export const getMe = async (req, res) => {
   } catch (error) {
     console.error("GetMe error:", error);
     res.status(500).json({ message: "Server error fetching profile." });
+  }
+};
+
+// ---- ONBOARDING ----
+// PUT /api/auth/onboarding
+// Updates the user's profile with skills, interests, and location
+export const onboarding = async (req, res) => {
+  try {
+    const { skills, interests, location } = req.body;
+
+    // Find the user and update
+    const user = await User.findById(req.user.id);
+    if (!user) {
+      return res.status(404).json({ message: "User not found." });
+    }
+
+    // Process skills and interests (convert comma-separated strings to arrays if necessary)
+    let skillsArray = [];
+    if (Array.isArray(skills)) {
+      skillsArray = skills;
+    } else if (typeof skills === 'string' && skills.trim() !== '') {
+      skillsArray = skills.split(",").map(s => s.trim()).filter(Boolean);
+    }
+
+    let interestsArray = [];
+    if (Array.isArray(interests)) {
+      interestsArray = interests;
+    } else if (typeof interests === 'string' && interests.trim() !== '') {
+      interestsArray = interests.split(",").map(i => i.trim()).filter(Boolean);
+    }
+
+    user.skills = skillsArray;
+    user.interests = interestsArray;
+    user.location = location || user.location;
+    user.hasCompletedOnboarding = true;
+
+    await user.save();
+
+    res.json({
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        plan: user.plan,
+        role: user.role,
+        isOnboarded: user.isOnboarded,
+        subscriptionStatus: user.subscriptionStatus,
+        skills: user.skills,
+        interests: user.interests,
+        location: user.location,
+      },
+    });
+  } catch (error) {
+    console.error("Onboarding error:", error);
+    res.status(500).json({ message: "Server error during onboarding." });
   }
 };

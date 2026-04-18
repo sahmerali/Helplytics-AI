@@ -61,11 +61,12 @@ export const AuthProvider = ({ children }) => {
   }, [token]);
 
   // ---- REGISTER ----
-  const register = async (name, email, password) => {
+  const register = async (name, email, password, role) => {
     const res = await axios.post(`${API_URL}/auth/register`, {
       name,
       email,
       password,
+      role,
     });
     // Save token to localStorage so it persists across refreshes
     localStorage.setItem("token", res.data.token);
@@ -104,10 +105,22 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  // ---- COMPLETE ONBOARDING ----
+  const completeOnboarding = async (skills, interests, location) => {
+    if (!token) return;
+    const res = await axios.put(
+      `${API_URL}/auth/onboarding`,
+      { skills, interests, location },
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+    setUser(res.data.user);
+    return res.data;
+  };
+
   // Provide all auth state and methods to children
   return (
     <AuthContext.Provider
-      value={{ user, token, loading, login, register, logout, refreshUser }}
+      value={{ user, token, loading, login, register, logout, refreshUser, completeOnboarding }}
     >
       {children}
     </AuthContext.Provider>
