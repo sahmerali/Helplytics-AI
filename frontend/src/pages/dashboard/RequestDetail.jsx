@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import axios from "axios";
-import { useAuth } from "../../../context/AuthContext";
+import { useAuth } from "../../context/AuthContext";
 import { Card, CardContent } from "../../components/ui/Card";
 import { Badge } from "../../components/ui/Badge";
 import { Button } from "../../components/ui/Button";
@@ -113,6 +113,22 @@ export default function RequestDetail() {
                     {skill}
                   </span>
                 ))}
+              </div>
+
+              {/* AI Suggested Responses */}
+              <div className="mt-8 pt-8 border-t border-slate-200/50">
+                <h3 className="text-[10px] font-bold tracking-widest text-teal-600 uppercase mb-4">AI Helper: Suggested Responses</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {[
+                    "Hey! I have strong experience in this and would love to help you debug this issue. Let me know when you're free to chat!",
+                    "I've worked on similar projects before and I think I know exactly what's causing your blocker. Happy to jump on a call."
+                  ].map((sug, i) => (
+                    <button key={i} className="text-left p-4 bg-white rounded-2xl border border-teal-100/50 hover:border-teal-300 transition-colors shadow-sm group">
+                      <p className="text-xs text-slate-600 italic line-clamp-2 mb-2 group-hover:text-slate-900 transition-colors">"{sug}"</p>
+                      <span className="text-[10px] font-bold text-teal-600 uppercase">Use this template</span>
+                    </button>
+                  ))}
+                </div>
               </div>
             </CardContent>
           </Card>

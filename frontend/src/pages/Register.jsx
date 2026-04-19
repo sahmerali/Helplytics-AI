@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { useAuth } from "../context/AuthContext.jsx";
 import { Link } from "react-router-dom";
+import { Card, CardContent } from "../components/ui/Card";
+import { Button } from "../components/ui/Button";
 
 export default function Register() {
   const { register } = useAuth();
@@ -8,7 +10,7 @@ export default function Register() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState("");
+  const [role, setRole] = useState("Both");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -33,132 +35,122 @@ export default function Register() {
   };
 
   return (
-    <div className="flex min-h-screen -mt-8 -mx-4">
-      {/* Left Pane - Branding & Graphic */}
-      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-purple-900 via-indigo-900 to-blue-900 text-white flex-col justify-center px-16 relative overflow-hidden">
-        {/* Decorative background shapes */}
-        <div className="absolute top-0 left-0 w-full h-full opacity-20 pointer-events-none">
-          <div className="absolute top-0 right-0 w-96 h-96 rounded-full bg-blue-500 blur-3xl"></div>
-          <div className="absolute bottom-0 left-12 w-72 h-72 rounded-full bg-purple-500 blur-3xl"></div>
-        </div>
-
-        <div className="relative z-10">
-          <h1 className="text-5xl font-extrabold mb-6 tracking-tight">Join the Network</h1>
-          <p className="text-xl text-indigo-200 mb-12 max-w-lg leading-relaxed">
-            Whether you need help with a project or have skills to share, Helplytics AI is where innovation happens.
+    <div className="flex min-h-[calc(100vh-80px)] items-center justify-center p-4 lg:p-12">
+      <div className="w-full max-w-6xl flex flex-col lg:flex-row gap-6 lg:gap-8">
+        
+        {/* Left Pane - Dark Slate Card */}
+        <div className="w-full lg:w-1/2 bg-slate-900 rounded-[2rem] p-10 lg:p-16 text-white shadow-xl flex flex-col justify-center">
+          <h3 className="text-[10px] font-bold tracking-widest text-teal-500 uppercase mb-4">Community Access</h3>
+          <h1 className="text-4xl lg:text-5xl font-bold tracking-tight mb-8 leading-[1.1]">
+            Join the support network.
+          </h1>
+          <p className="text-slate-300 text-lg leading-relaxed mb-8">
+            Create your account and jump into a multi-page product flow designed for asking, offering, and tracking help with a premium interface.
           </p>
-          <div className="grid grid-cols-2 gap-6">
-            <div className="bg-white/10 backdrop-blur-sm p-6 rounded-2xl border border-white/10">
-              <h3 className="text-2xl mb-2">🚀</h3>
-              <h4 className="font-bold text-lg">Launch Faster</h4>
-              <p className="text-indigo-200 text-sm mt-1">Find the exact talent you need in minutes.</p>
-            </div>
-            <div className="bg-white/10 backdrop-blur-sm p-6 rounded-2xl border border-white/10">
-              <h3 className="text-2xl mb-2">💡</h3>
-              <h4 className="font-bold text-lg">Share Skills</h4>
-              <p className="text-indigo-200 text-sm mt-1">Work on exciting projects and level up.</p>
-            </div>
-          </div>
+          <ul className="space-y-4 text-slate-400 font-medium text-sm leading-relaxed">
+            <li className="flex items-start gap-3">
+              <span className="text-teal-500 mt-1">•</span> Smart matching for your specific skill set
+            </li>
+            <li className="flex items-start gap-3">
+              <span className="text-teal-500 mt-1">•</span> Track your contribution and build your trust score
+            </li>
+            <li className="flex items-start gap-3">
+              <span className="text-teal-500 mt-1">•</span> Real-time notifications and community insights
+            </li>
+          </ul>
         </div>
-      </div>
 
-      {/* Right Pane - Form */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center bg-gray-50 px-8 py-12">
-        <div className="w-full max-w-md bg-white p-10 rounded-2xl shadow-xl border border-gray-100 max-h-screen overflow-y-auto">
-          <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold text-gray-900">Create Account</h2>
-            <p className="text-sm text-gray-500 mt-2">Join our community today.</p>
-          </div>
+        {/* Right Pane - Auth Form */}
+        <Card className="w-full lg:w-1/2 bg-beige-50 rounded-[2rem] border-0 shadow-xl overflow-hidden p-0">
+          <CardContent className="p-10 lg:p-16">
+            <h3 className="text-[10px] font-bold tracking-widest text-teal-600 uppercase mb-4">Login / Signup</h3>
+            <h2 className="text-3xl lg:text-4xl font-bold text-slate-900 tracking-tight mb-10 leading-tight">
+              Create your community profile
+            </h2>
 
-          {error && (
-            <div className="bg-red-50 text-red-600 p-4 rounded-lg mb-6 text-sm font-medium border border-red-100 flex items-center gap-2">
-              <span>⚠️</span> {error}
-            </div>
-          )}
-
-          <form onSubmit={handleSubmit} className="space-y-5">
-            {/* Role Selection */}
-            <div className="mb-2">
-              <label className="block text-sm font-semibold text-gray-700 mb-3">
-                I am here to...
-              </label>
-              <div className="grid grid-cols-3 gap-2">
-                {["Need Help", "Can Help", "Both"].map((r) => (
-                  <button
-                    key={r}
-                    type="button"
-                    onClick={() => setRole(r)}
-                    className={`py-3 px-2 border-2 rounded-xl text-xs sm:text-sm font-bold transition-all duration-200 ${
-                      role === r
-                        ? "bg-indigo-50 border-indigo-600 text-indigo-700 shadow-sm"
-                        : "bg-white border-gray-200 text-gray-500 hover:border-gray-300 hover:bg-gray-50"
-                    }`}
-                  >
-                    {r}
-                  </button>
-                ))}
+            {error && (
+              <div className="bg-red-50 text-red-600 p-4 rounded-xl mb-6 text-sm font-bold border border-red-100 flex items-center gap-2">
+                <span>⚠️</span> {error}
               </div>
+            )}
+
+            <form onSubmit={handleSubmit} className="space-y-6">
+              
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-2 uppercase tracking-wide">Role selection</label>
+                <div className="grid grid-cols-3 gap-3">
+                  {["Need Help", "Can Help", "Both"].map((r) => (
+                    <button
+                      key={r}
+                      type="button"
+                      onClick={() => setRole(r)}
+                      className={`py-3 px-2 border-2 rounded-xl text-xs font-bold transition-all duration-200 ${
+                        role === r
+                          ? "bg-slate-900 border-slate-900 text-white shadow-md"
+                          : "bg-white border-gray-200 text-slate-500 hover:border-slate-300 hover:bg-slate-50"
+                      }`}
+                    >
+                      {r}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-2 uppercase tracking-wide">Full Name</label>
+                <input
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  required
+                  className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 bg-white font-medium text-slate-700 shadow-sm placeholder-slate-400"
+                  placeholder="Jane Doe"
+                />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-2 uppercase tracking-wide">Email</label>
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 bg-white font-medium text-slate-700 shadow-sm placeholder-slate-400"
+                    placeholder="community@helphub.ai"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-2 uppercase tracking-wide">Password</label>
+                  <input
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 bg-white font-medium text-slate-700 shadow-sm placeholder-slate-400"
+                    placeholder="At least 6 characters"
+                  />
+                </div>
+              </div>
+
+              <div className="pt-6">
+                <Button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full bg-teal-600 text-white font-bold py-4 rounded-xl shadow-lg shadow-teal-600/20 hover:bg-teal-700 hover:shadow-teal-600/30 transition-all text-lg tracking-wide disabled:opacity-50"
+                >
+                  {loading ? "Creating account..." : "Continue to dashboard"}
+                </Button>
+              </div>
+            </form>
+
+            <div className="text-center mt-6">
+               <Link to="/login" className="text-sm font-bold text-teal-600 hover:text-teal-700 transition-colors">
+                  Already have an account? Sign in
+               </Link>
             </div>
-
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
-                Full Name
-              </label>
-              <input
-                type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                required
-                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all bg-gray-50 focus:bg-white"
-                placeholder="Jane Doe"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
-                Email Address
-              </label>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all bg-gray-50 focus:bg-white"
-                placeholder="jane@company.com"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
-                Password
-              </label>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                minLength={6}
-                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all bg-gray-50 focus:bg-white"
-                placeholder="At least 6 characters"
-              />
-            </div>
-
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full bg-indigo-600 text-white font-bold py-3 mt-4 rounded-xl shadow-lg shadow-indigo-200 hover:bg-indigo-700 hover:shadow-indigo-300 transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {loading ? "Creating Account..." : "Sign Up"}
-            </button>
-          </form>
-
-          <p className="text-center text-sm text-gray-600 mt-8">
-            Already have an account?{" "}
-            <Link to="/login" className="font-semibold text-indigo-600 hover:text-indigo-800 transition-colors">
-              Sign in
-            </Link>
-          </p>
-        </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

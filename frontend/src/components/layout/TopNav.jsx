@@ -1,69 +1,67 @@
-import { useAuth } from "../../../context/AuthContext";
-import { useLocation } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext.jsx";
+import { useLocation, Link } from "react-router-dom";
+import { Button } from "../ui/Button";
 
 export default function TopNav() {
   const { user, logout } = useAuth();
   const location = useLocation();
 
-  // Dynamic Title Generator
-  const getPageTitle = () => {
-    const path = location.pathname;
-    if (path === "/dashboard") return "Dashboard";
-    if (path.includes("feed")) return "Explore / Feed";
-    if (path.includes("create")) return "Create Request";
-    if (path.includes("messages")) return "Messages";
-    if (path.includes("leaderboard")) return "Leaderboard";
-    if (path.includes("ai-center")) return "AI Center";
-    if (path.includes("notifications")) return "Notifications";
-    if (path.includes("profile")) return "Profile";
-    return "Overview";
-  };
+  const navItems = [
+    { name: "Dashboard", path: "/dashboard", exact: true },
+    { name: "Explore", path: "/dashboard/feed" },
+    { name: "Leaderboard", path: "/dashboard/leaderboard" },
+    { name: "Notifications", path: "/dashboard/notifications" },
+    { name: "AI Center", path: "/dashboard/ai-center" },
+  ];
 
   return (
-    <header className="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-6 sticky top-0 z-10">
-      <div className="flex items-center gap-4">
-        {/* Mobile menu button could go here */}
-        <h1 className="text-xl font-bold text-gray-900 hidden sm:block">{getPageTitle()}</h1>
+    <header className="h-20 bg-transparent flex items-center justify-between px-8 md:px-16 sticky top-0 z-50 backdrop-blur-sm">
+      <div className="flex items-center gap-12">
+        <Link to="/dashboard" className="flex items-center gap-3">
+          <div className="h-10 w-10 bg-teal-600 rounded-full flex items-center justify-center text-white font-bold text-lg">H</div>
+          <span className="font-bold text-slate-900 tracking-tight text-lg">HelpHub AI</span>
+        </Link>
+
+        <nav className="hidden lg:flex items-center gap-8">
+          {navItems.map((item) => (
+            <Link
+              key={item.name}
+              to={item.path}
+              className={`text-sm font-bold tracking-tight transition-colors ${location.pathname === item.path || (item.exact && location.pathname === "/dashboard")
+                ? "text-slate-900 bg-slate-200/50 px-4 py-2 rounded-full"
+                : "text-slate-500 hover:text-slate-900"
+                }`}
+            >
+              {item.name}
+            </Link>
+          ))}
+        </nav>
       </div>
 
-      <div className="flex-1 max-w-md px-6 hidden md:block">
-        <div className="relative">
-          <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
-            🔍
-          </span>
-          <input
-            type="text"
-            className="w-full bg-gray-50 border border-gray-200 rounded-lg pl-10 pr-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-colors"
-            placeholder="Search requests, skills, or users..."
-          />
+      <div className="flex items-center gap-6">
+        <div className="hidden xl:flex items-center gap-2 text-slate-400 font-bold text-xs uppercase tracking-widest">
+          <span className="h-2 w-2 bg-emerald-500 rounded-full animate-pulse"></span>
+          Live community signals
         </div>
-      </div>
 
-      <div className="flex items-center gap-4">
-        <button className="relative p-2 text-gray-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-full transition-colors focus:outline-none">
-          <span className="text-xl">🔔</span>
-          <span className="absolute top-1.5 right-1.5 flex h-2 w-2">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-indigo-500"></span>
-          </span>
-        </button>
-
-        <div className="flex items-center gap-2 border-l border-gray-200 pl-4">
-          <button className="flex items-center gap-2 hover:opacity-80 transition-opacity focus:outline-none">
-            <div className="h-8 w-8 rounded-full bg-indigo-100 border border-indigo-200 flex items-center justify-center text-indigo-700 font-bold overflow-hidden">
-              {user?.name?.charAt(0).toUpperCase() || "U"}
+        {user ? (
+          <div className="flex items-center gap-4">
+            <div className="flex flex-col items-end hidden sm:flex">
+              <span className="text-xs font-bold text-slate-900">{user.name}</span>
+              <span className="text-[10px] font-bold text-teal-600 uppercase">{user.role}</span>
             </div>
-            <span className="text-xs text-gray-400">▼</span>
-          </button>
-          
-          <button 
-            onClick={logout}
-            className="ml-2 p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-full transition-colors focus:outline-none"
-            title="Logout"
-          >
-            <span className="text-lg">🚪</span>
-          </button>
-        </div>
+            <button
+              onClick={logout}
+              className="h-10 w-10 rounded-full bg-slate-200 flex items-center justify-center text-slate-600 font-bold text-sm hover:bg-red-50 hover:text-red-600 transition-all border border-transparent hover:border-red-100"
+            >
+              {user.name?.charAt(0).toUpperCase()}
+            </button>
+          </div>
+        ) : (
+          <Link to="/login">
+            <Button variant="primary" className="bg-teal-600 px-6 rounded-full font-bold">Join the platform</Button>
+          </Link>
+        )}
       </div>
     </header>
   );
